@@ -3,6 +3,8 @@ dotenv.config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const methodOverride = require("method-override"); // new
+const morgan = require("morgan"); //new
 
 const app = express();
 
@@ -16,7 +18,8 @@ const Fruit = require('./models/fruit.js');
 
 //middleware
 app.use(express.urlencoded({ extended: false }));
-
+app.use(methodOverride("_method")); // new
+app.use(morgan("dev")); //new
 
 // GET /
 app.get("/", async (req, res) => {
@@ -54,6 +57,22 @@ app.get("/fruits/:fruitId", async (req, res) => {
       await Fruit.create(req.body);
     res.redirect("/fruit");
   });
+
+  app.delete("/fruits/:fruitId", async (req, res) => {
+    await Fruit.findByIdAndDelete(req.params.fruitId);
+    res.redirect("/fruits");
+  });
+  
+  // GET localhost:3000/fruits/:fruitId/edit
+  app.get("/fruits/:fruitId/edit", async (req, res) => {
+    const foundFruit = await Fruit.findById(req.params.fruitId);
+    res.render("fruits/edit.ejs", {
+      fruit: foundFruit,
+    });
+  });
+  
+  
+
 
 app.listen(3000, () => {
   console.log('Listening on port 3000');
