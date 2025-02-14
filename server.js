@@ -36,6 +36,14 @@ app.get("/", async (req, res) => {
     res.render('fruits/new.ejs');
   });
 
+
+  // GET /FRUITS/:ID
+app.get("/fruits/:fruitId", async (req, res) => {
+    const foundFruit = await Fruit.findById(req.params.fruitId);
+    res.render("fruits/show.ejs", { fruit: foundFruit });
+  });
+  
+  
   //POST / fruits
   app.post("/fruits", async (req, res) => {
     if (req.body.isReadyToEat === "on") {
